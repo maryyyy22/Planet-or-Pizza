@@ -1,0 +1,782 @@
+:root{
+  --bg:#0b1220;
+  --panel:#0e1628;
+  --accent:#79b8ff;
+  --text:#ffffff;
+  --muted:rgba(255,255,255,.7);
+  --border:rgba(255,255,255,.12);
+  --good:#9ae6b4;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: system-ui,-apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(1200px 800px at 60% -10%, #12223f 0%, var(--bg) 60%, var(--bg) 100%);
+  color:var(--text);
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1100px; margin:0 auto; padding:0 16px}
+.section{padding:64px 0}
+.row{display:grid; gap:24px}
+@media(min-width:960px){.row-2{grid-template-columns: 1.1fr 1fr}}
+@media(min-width:992px){.row-5{grid-template-columns: 2fr 3fr}}
+
+.topbar{position:sticky; top:0; z-index:50; backdrop-filter: blur(8px); background:rgba(11,18,32,.75); border-bottom:1px solid var(--border)}
+.topbar .inner{display:flex; align-items:center; justify-content:space-between; padding:12px 0}
+.brand{letter-spacing:.22em; text-transform:uppercase; font-weight:700}
+nav a{color:rgba(255,255,255,.82); margin-left:18px}
+nav a:hover{color:#fff}
+.btn{border:1px solid var(--border); background:rgba(255,255,255,.06); color:#fff; padding:10px 14px; border-radius:10px}
+.btn:hover{background:rgba(255,255,255,.12)}
+
+.panel{background:rgba(14,22,40,.72); border:1px solid var(--border); border-radius:18px}
+.panel.pad{padding:18px}
+
+.hero{position:relative; overflow:hidden}
+.hero h1{font-size: clamp(28px, 5vw, 52px); line-height:1.1; margin:0}
+.lead{color:var(--muted); font-size: clamp(15px, 2.3vw, 18px)}
+.hero-balls{position:relative; width:min(90vw,360px); height:min(90vw,360px); margin: 0 auto}
+.planet{position:absolute; inset:0; border-radius:999px; background:radial-gradient(circle at 35% 35%, #a7f3ff, #3b82f6 60%, #1e40af)}
+.planet-glow{position:absolute; inset:-18px; border-radius:999px; filter:blur(26px); background:radial-gradient(circle, rgba(59,130,246,.35), transparent 60%)}
+@keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+.planet, .planet-glow{animation: floaty 6s ease-in-out infinite}
+
+.starfield{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+.star{position:absolute; background:rgba(255,255,255,.75); border-radius:999px; animation: twinkle linear infinite}
+@keyframes twinkle{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+
+.list{color:var(--muted); font-size:14px; line-height:1.6}
+.list li{margin:.45rem 0}
+.controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+input[type="range"]{width:260px}
+.badge{background:rgba(121,184,255,.12); border:1px solid rgba(121,184,255,.35); color:#cfe6ff; padding:4px 8px; border-radius:999px; font-size:12px}
+
+.tabs{display:grid; gap:12px}
+@media(min-width:760px){.tabs{grid-template-columns:repeat(3,1fr)}}
+.tab{border-radius:16px; padding:14px; text-align:left}
+.tab:hover{background:rgba(255,255,255,.06)}
+.tab.active{outline:2px solid rgba(121,184,255,.4)}
+
+.facts{display:grid; gap:14px}
+@media(min-width:760px){.facts{grid-template-columns:repeat(3,1fr)}}
+.fact{padding:18px; border-radius:16px; transition: transform .25s ease, background .25s ease;}
+.fact:hover{transform: translateY(-6px) scale(1.02); background:rgba(255,255,255,.06)}
+
+footer{border-top:1px solid var(--border); color:#9fb1d2}
+
+/* Light curve gallery */
+.lc-grid{display:grid; gap:16px}
+@media(min-width:960px){.lc-grid{grid-template-columns: 1.2fr 1fr}}
+.lc-toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+select{background:rgba(255,255,255,.06); color:#fff; border:1px solid var(--border); border-radius:10px; padding:8px 10px}
+.lc-legend{display:flex; gap:14px; flex-wrap:wrap; color:var(--muted); font-size:13px}
+.dot{display:inline-block; width:10px; height:10px; border-radius:50%; background:#fff; margin-right:6px; vertical-align:middle}
+.dot.model{background:var(--good)}
+
+/* Graphics */
+.geom{aspect-ratio: 2.3/1; width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:16px; position:relative; overflow:hidden}
+.geom .star{position:absolute; left:10%; top:50%; transform:translateY(-50%); width:130px; height:130px; border-radius:999px; background: radial-gradient(circle at 30% 30%, #fff7d6, #ffd26d, #ff9a1f);}
+.geom .path{position:absolute; left:10%; right:10%; top:50%; height:1px; background:rgba(255,255,255,.25)}
+.geom .planet{position:absolute; left: calc(10% + 30px); top: 50%; width:20px; height:20px; border-radius:999px; background: radial-gradient(circle at 30% 30%, #9ad0ff, #1f6feb); transform: translateY(-50%); animation: transit 7s linear infinite}
+.geom .eye{position:absolute; right:2%; top:50%; transform:translateY(-50%); width:24px; height:24px; border:2px solid #fff; border-radius:50%}
+@keyframes transit { 0% { left: 10% } 100%{ left: 90% } }
+
+/* Learn Grid Styles */
+.learn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.learn-item {
+  background: rgba(16, 23, 41, 0.6);
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid rgba(79, 195, 247, 0.2);
+}
+
+.learn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.visualization {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Planet Size Visualization */
+.size-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  height: 80px;
+}
+
+.star {
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, #ffeb3b, #ff9800);
+  border-radius: 50%;
+  box-shadow: 0 0 20px #ff9800;
+}
+
+.planet-comparison {
+  display: flex;
+  gap: 20px;
+}
+
+.planet {
+  border-radius: 50%;
+  position: relative;
+}
+
+.planet[data-size="small"] {
+  width: 12px;
+  height: 12px;
+  background: #8bc34a;
+  box-shadow: 0 0 8px #8bc34a;
+}
+
+.planet[data-size="large"] {
+  width: 24px;
+  height: 24px;
+  background: #ff5722;
+  box-shadow: 0 0 12px #ff5722;
+}
+
+.light-curve {
+  fill: none;
+  stroke-width: 2;
+}
+
+.light-curve.shallow {
+  stroke: #8bc34a;
+}
+
+.light-curve.deep {
+  stroke: #ff5722;
+}
+
+/* Orbital Period Visualization */
+.orbit-system {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.orbit-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.central-star {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ffeb3b, #ff9800);
+  border-radius: 50%;
+  box-shadow: 0 0 15px #ff9800;
+}
+
+.orbit-path {
+  position: absolute;
+  border: 1px solid rgba(79, 195, 247, 0.3);
+  border-radius: 50%;
+}
+
+#orbit-1 {
+  width: 60px;
+  height: 60px;
+  top: 30px;
+  left: 30px;
+  animation: orbit 4s linear infinite;
+}
+
+#orbit-2 {
+  width: 90px;
+  height: 90px;
+  top: 15px;
+  left: 15px;
+  animation: orbit 8s linear infinite;
+}
+
+#orbit-3 {
+  width: 120px;
+  height: 120px;
+  top: 0;
+  left: 0;
+  animation: orbit 16s linear infinite;
+}
+
+.planet-orbiting {
+  position: absolute;
+  border-radius: 50%;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.planet-orbiting[data-period="fast"] {
+  width: 8px;
+  height: 8px;
+  background: #e91e63;
+}
+
+.planet-orbiting[data-period="medium"] {
+  width: 10px;
+  height: 10px;
+  background: #9c27b0;
+}
+
+.planet-orbiting[data-period="slow"] {
+  width: 12px;
+  height: 12px;
+  background: #673ab7;
+}
+
+.timeline {
+  stroke: #4fc3f7;
+  stroke-width: 2;
+}
+
+.dip-marker {
+  fill: #ff5252;
+  animation: pulse 2s infinite;
+}
+
+/* Atmospheres Visualization */
+.spectrum-demo {
+  position: relative;
+  width: 120px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.star-light {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #ffeb3b, #ff9800);
+  border-radius: 50%;
+  box-shadow: 0 0 15px #ff9800;
+}
+
+.atmosphere-layer {
+  position: relative;
+  width: 60px;
+  height: 40px;
+  background: linear-gradient(90deg, rgba(33,150,243,0.3), rgba(0,188,212,0.3));
+  border-radius: 20px;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 10px;
+}
+
+.spectrum-line {
+  height: 3px;
+  border-radius: 2px;
+}
+
+.spectrum-line.water { background: rgba(33,150,243,0.8); width: 80%; }
+.spectrum-line.co2 { background: rgba(76,175,80,0.8); width: 60%; }
+.spectrum-line.oxygen { background: rgba(244,67,54,0.8); width: 40%; }
+
+.planet-core {
+  width: 20px;
+  height: 20px;
+  background: #795548;
+  border-radius: 50%;
+}
+
+.spectrum-curve {
+  fill: none;
+  stroke: #2196f3;
+  stroke-width: 2;
+}
+
+.absorption-line {
+  stroke: #ff5252;
+  stroke-width: 1;
+  stroke-dasharray: 2,2;
+}
+
+/* Multi-planet Systems Visualization */
+.multi-planet-system {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.central-star-small {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #ffeb3b, #ff9800);
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff9800;
+}
+/* حاوية كوكب البيتزا */
+.pizza-planet-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  margin: 20px 0;
+}
+
+/* كوكب البيتزا الصخري */
+.pizza-rock-planet {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  animation: planetRotate 20s linear infinite;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* النصف الصخري */
+.rock-half {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(45deg, #8B7355, #A0522D, #CD853F);
+  overflow: hidden;
+}
+
+.rock-texture {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(139, 69, 19, 0.4) 2px, transparent 3px),
+    radial-gradient(circle at 70% 60%, rgba(160, 82, 45, 0.3) 3px, transparent 4px);
+}
+
+.crater {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(101, 67, 33, 0.6);
+  width: 8px;
+  height: 8px;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* النصف بيتزا */
+.pizza-half {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: #FFD700;
+  overflow: hidden;
+}
+
+.pizza-crust {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  background: #D2B48C;
+  border-radius: 0 5px 5px 0;
+}
+
+.pizza-sauce {
+  position: absolute;
+  top: 10%;
+  right: 8px;
+  width: calc(50% - 12px);
+  height: 80%;
+  background: #DC143C;
+  border-radius: 50% 0 0 50%;
+}
+
+.cheese {
+  position: absolute;
+  top: 20%;
+  right: 15px;
+  width: calc(50% - 20px);
+  height: 60%;
+  background: #FFD700;
+  border-radius: 50% 0 0 50%;
+}
+
+.pepperoni {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8B0000;
+}
+
+.mushroom {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: #F5F5DC;
+  border-radius: 50%;
+}
+
+.mushroom::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 1px;
+  width: 3px;
+  height: 2px;
+  background: #8B4513;
+  border-radius: 50%;
+}
+
+.green-pepper {
+  position: absolute;
+  width: 4px;
+  height: 6px;
+  background: #228B22;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+
+/* أنيميشن دوران الكوكب */
+@keyframes planetRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.feature-tag {
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  color: #FFD700;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.multi-orbit {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+}
+/* ستايلات الكوكب الجديد في الـ Hero */
+.hero-planet-container {
+  position: relative;
+  width: min(90vw, 360px);
+  height: min(90vw, 360px);
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.exoplanet-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1f3a60 0%, #0e1628 100%);
+  border: 1px solid rgba(121, 184, 255, 0.3);
+}
+
+.planet-image {
+  width: 100%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #2c5282 0%, #1a365d 100%);
+}
+
+.planet-image img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 
+    0 0 40px rgba(121, 184, 255, 0.6),
+    0 0 80px rgba(121, 184, 255, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  animation: floaty 6s ease-in-out infinite;
+  border: 2px solid rgba(121, 184, 255, 0.5);
+}
+
+.planet-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(11, 18, 32, 0.9));
+  padding: 20px;
+  color: white;
+}
+
+.planet-info-overlay h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.4em;
+  background: linear-gradient(90deg, #79b8ff, #cfe6ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 600;
+}
+
+.planet-info-overlay p {
+  margin: 0 0 15px 0;
+  font-size: 0.9em;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.planet-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8em;
+}
+
+.stat .label {
+  color: #9fb1d7;
+  font-weight: 500;
+}
+
+.stat .value {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* تأثيرات تفاعلية */
+.exoplanet-card:hover .planet-image img {
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 60px rgba(121, 184, 255, 0.8),
+    0 0 120px rgba(121, 184, 255, 0.4),
+    inset 0 0 30px rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+/* إذا ماكنش عايز الصورة الخارجية، هنا بديل CSS جميل */
+.planet-visual-fallback {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #4a7abc, #2c5282, #1e3a5f);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 40px rgba(121, 184, 255, 0.6),
+    0 0 80px rgba(121, 184, 255, 0.3);
+  animation: floaty 6s ease-in-out infinite;
+}
+
+.planet-visual-fallback::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 25px;
+  height: 15px;
+  background: rgba(76, 175, 80, 0.6);
+  border-radius: 40%;
+  filter: blur(1px);
+}
+
+.planet-visual-fallback::after {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  width: 30px;
+  height: 20px;
+  background: rgba(33, 150, 243, 0.5);
+  border-radius: 40%;
+  filter: blur(1px);
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  filter: blur(3px);
+}
+
+.cloud:nth-child(1) {
+  top: 30%;
+  left: 20%;
+  width: 15px;
+  height: 8px;
+}
+
+.cloud:nth-child(2) {
+  top: 50%;
+  left: 60%;
+  width: 20px;
+  height: 10px;
+}
+
+.cloud:nth-child(3) {
+  top: 70%;
+  left: 40%;
+  width: 12px;
+  height: 6px;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-10px) scale(1.02); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+/* تحسينات للريسبونسف */
+@media (max-width: 768px) {
+  .hero-planet-container {
+    width: min(80vw, 280px);
+    height: min(80vw, 280px);
+  }
+  
+  .planet-info-overlay {
+    padding: 15px;
+  }
+  
+  .planet-info-overlay h3 {
+    font-size: 1.2em;
+  }
+  
+  .planet-info-overlay p {
+    font-size: 0.8em;
+  }
+}
+
+#multi-orbit-1 {
+  width: 40px;
+  height: 40px;
+  top: 30px;
+  left: 30px;
+  animation: orbit 3s linear infinite;
+}
+
+#multi-orbit-2 {
+  width: 70px;
+  height: 70px;
+  top: 15px;
+  left: 15px;
+  animation: orbit 6s linear infinite reverse;
+}
+
+#multi-orbit-3 {
+  width: 100px;
+  height: 100px;
+  top: 0;
+  left: 0;
+  animation: orbit 9s linear infinite;
+}
+
+.multi-planet {
+  position: absolute;
+  border-radius: 50%;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.multi-planet[data-index="1"] {
+  width: 6px;
+  height: 6px;
+  background: #4caf50;
+}
+
+.multi-planet[data-index="2"] {
+  width: 8px;
+  height: 8px;
+  background: #ff9800;
+}
+
+.multi-planet[data-index="3"] {
+  width: 10px;
+  height: 10px;
+  background: #f44336;
+}
+
+.complex-curve {
+  fill: none;
+  stroke: #9c27b0;
+  stroke-width: 2;
+}
+
+/* Animations */
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* أنيميشن نبض القلب للشمس */
+@keyframes sunPulse {
+  0% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* أنيميشن للنواة المركزية للشمس */
+@keyframes sunCorePulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 80px #ffeb3b,
+      0 0 160px rgba(255, 152, 0, 0.8),
+      0 0 240px rgba(255, 87, 34, 0.6),
+      0 0 320px rgba(230, 81, 0, 0.4);
+  }
+  50% {
+    box-shadow: 
+      0 0 100px #ffeb3b,
+      0 0 200px rgba(255, 152, 0, 0.9),
+      0 0 300px rgba(255, 87, 34, 0.7),
+      0 0 400px rgba(230, 81, 0, 0.5);
+  }
+}
+
+/* تأثيرات إضافية للشمس */
+#transit-demo .panel [style*="radial-gradient"] {
+  position: relative;
+  z-index: 2;
+}
+
+/* تحسين الحاوية لاستيعاب الإشعاع */
+#transit-demo .panel [style*="position:relative"] {
+  overflow: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .learn-grid {
+    grid-template-columns: 1fr;
+  }
+}

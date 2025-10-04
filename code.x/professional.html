@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ExoExplorer | Professional Research Tools</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #6C63FF;
+      --primary-light: #8A84FF;
+      --primary-dark: #5752CC;
+      --secondary: #FF6B9D;
+      --secondary-light: #FF8FB1;
+      --accent: #36D1DC;
+      --accent-light: #5BDFE8;
+      --dark: #121212;
+      --darker: #0A0A0A;
+      --light: #F5F5F7;
+      --gray: #8E8E93;
+      --success: #4CD964;
+      --warning: #FFCC00;
+      --danger: #FF3B30;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+    }
+
+    /* VIDEO BACKGROUND */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.4) saturate(1.2);
+    }
+
+    header {
+      width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    
+    .logo-icon {
+      font-size: 1.8rem;
+      color: var(--accent);
+    }
+    
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+    
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--light);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 0.5rem 0;
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover {
+      color: var(--primary-light);
+    }
+    
+    nav a:hover::after {
+      width: 100%;
+    }
+    
+    nav a.active {
+      color: var(--primary);
+    }
+    
+    nav a.active::after {
+      width: 100%;
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      gap: 4rem;
+    }
+
+    .page-title {
+      font-size: 3rem;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-align: center;
+      background: linear-gradient(90deg, var(--light), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+    
+    .page-subtitle {
+      font-size: 1.2rem;
+      text-align: center;
+      color: var(--gray);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* Circles */
+    .circle-container {
+      display: flex;
+      gap: 4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    
+    .circle {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .circle::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary), var(--primary));
+      z-index: -1;
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .circle:hover::before {
+      opacity: 1;
+    }
+    
+    .circle:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(108, 99, 255, 0.3);
+    }
+    
+    .circle-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    
+    .circle:nth-child(2) .circle-icon {
+      color: var(--secondary);
+    }
+    
+    .circle:nth-child(3) .circle-icon {
+      color: var(--primary);
+    }
+
+    /* Slide-up cards */
+    .slide-card {
+      position: fixed;
+      bottom: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 900px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 2.5rem;
+      border-radius: 24px 24px 0 0;
+      transition: bottom 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 50;
+      color: var(--light);
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    .slide-card.active {
+      bottom: 0;
+    }
+    
+    .slide-card h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      color: var(--light);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+    
+    .card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    /* Upload/Detect Buttons */
+    .upload-btn, .detect-btn, .lime-btn, .save-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+    }
+    
+    .upload-btn:hover, .detect-btn:hover, .lime-btn:hover, .save-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+    }
+    
+    .upload-btn:active, .detect-btn:active, .lime-btn:active, .save-btn:active {
+      transform: translateY(0);
+    }
+    
+    .detect-btn {
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+    }
+    
+    .lime-btn {
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+    }
+    
+    .save-btn {
+      background: linear-gradient(135deg, var(--success), #3AC759);
+    }
+
+    .results-box {
+      margin-top: 1rem;
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      width: 100%;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Binary Result Display */
+    .binary-result {
+      font-size: 5rem;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      margin: 1rem 0;
+      text-shadow: 0 0 30px currentColor;
+    }
+    
+    .planet-result {
+      color: var(--accent);
+    }
+    
+    .pizza-result {
+      color: var(--secondary);
+    }
+    
+    .result-label {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--gray);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+    
+    /* Image Preview */
+    #image-preview {
+      display: none;
+      max-width: 300px;
+      margin-top: 1rem;
+    }
+    
+    #preview {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Insights Sections */
+    .info-section {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 800px;
+      border: 1px solid var(--glass-border);
+      transition: transform 0.3s ease;
+    }
+    
+    .info-section:hover {
+      transform: translateY(-5px);
+    }
+    
+    .info-section img {
+      width: 180px;
+      height: auto;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .info-text {
+      flex: 1;
+    }
+    
+    .info-text h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.8rem;
+      color: var(--primary-light);
+    }
+    
+    .info-text p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--light);
+    }
+
+    /* Drive ID Input */
+    .drive-input {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      width: 100%;
+      max-width: 500px;
+    }
+    
+    .drive-input input {
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .drive-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+    }
+    
+    .drive-input label {
+      font-weight: 600;
+      color: var(--primary-light);
+    }
+    
+    .file-link {
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      word-break: break-all;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .file-link a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .file-link a:hover {
+      color: var(--accent-light);
+      text-decoration: underline;
+    }
+    
+    /* Footer */
+    footer {
+      width: 100%;
+      background: var(--darker);
+      padding: 2rem;
+      text-align: center;
+      color: var(--gray);
+      border-top: 1px solid var(--glass-border);
+      margin-top: auto;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary-light);
+    }
+    
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    
+    .social-icons a {
+      color: var(--gray);
+      font-size: 1.5rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .social-icons a:hover {
+      color: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .circle-container {
+        gap: 2rem;
+      }
+      
+      .circle {
+        width: 180px;
+        height: 180px;
+      }
+      
+      .page-title {
+        font-size: 2.2rem;
+      }
+      
+      .info-section {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      nav {
+        gap: 1rem;
+      }
+      
+      header {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background Video -->
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="vecteezy_abstract-realistic-space-planet-round-sphere-with-a-stone_24678487.mp4" type="video/mp4"/>
+</video>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon"><i class="fas fa-globe-americas"></i></div>
+    <h1>ExoExplorer</h1>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="beginner.html">Beginners</a>
+    <a href="professional.html" class="active">Professional</a>
+    <a href="contact.html">Contact Us</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-title">Professional Research Tools</div>
+  <div class="page-subtitle">Advanced AI-powered tools for planetary research and data analysis</div>
+  
+  <div class="circle-container">
+    <div class="circle" id="circle-detector">
+      <div class="circle-icon"><i class="fas fa-search"></i></div>
+      <div>Planet Detector</div>
+    </div>
+    <div class="circle" id="circle-insights">
+      <div class="circle-icon"><i class="fas fa-chart-line"></i></div>
+      <div>Pizza vs Planet Insights</div>
+    </div>
+    <div class="circle" id="circle-drive">
+      <div class="circle-icon"><i class="fas fa-cloud"></i></div>
+      <div>Google Drive Files</div>
+    </div>
+  </div>
+</main>
+
+<!-- Planet Detector Card -->
+<div class="slide-card" id="detector-card">
+  <button class="close-btn" onclick="closeCard('detector-card')"><i class="fas fa-times"></i></button>
+  <h2>AI Planet Detector</h2>
+  <div class="card-content">
+    <label class="upload-btn" for="upload-input"><i class="fas fa-upload"></i> Upload Image</label>
+    <input type="file" id="upload-input" accept=".fits,.fit,.fts,.jpg,.jpeg,.png" onchange="previewImage(event)"/>
+    <button class="upload-btn" onclick="useCamera()"><i class="fas fa-camera"></i> Take Photo</button>
+    <button class="detect-btn" onclick="runDetection()"><i class="fas fa-rocket"></i> Run Detection</button>
+    
+    <!-- Image Preview -->
+    <div id="image-preview">
+      <img id="preview"/>
+    </div>
+    
+    <div class="results-box" id="results-box">
+      <p>No detection yet. Upload an image and run detection.</p>
+    </div>
+    <button class="lime-btn" onclick="showLIME()"><i class="fas fa-brain"></i> Explain with LIME</button>
+  </div>
+</div>
+
+<!-- Insights Card -->
+<div class="slide-card" id="insights-card">
+  <button class="close-btn" onclick="closeCard('insights-card')"><i class="fas fa-times"></i></button>
+  <h2>Pizza vs Planet Insights</h2>
+  <div class="card-content">
+    <div class="info-section">
+      <img src="Screenshot 2025-10-04 010912.png" alt="LIME heatmap"/>
+      <div class="info-text">
+        <h3>LIME Explanation</h3>
+        <p>LIME highlights the exact pixel regions the CNN focused on to decide whether the object is a planet or a pizza. Brighter areas in the heatmap reveal strong influence on the prediction.</p>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <img src="Screenshot 2025-10-04 010937.png" alt="Uncertainty chart"/>
+      <div class="info-text">
+        <h3>Uncertainty Analysis</h3>
+        <p>Uncertainty estimates show how confident the model is about its decision. Low uncertainty means stable predictions, while high uncertainty suggests the need for expert review.</p>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <img src="Screenshot 2025-10-04 010925.png" alt="Confidence score gauge"/>
+      <div class="info-text">
+        <h3>Confidence Score</h3>
+        <p>The confidence score quantifies how sure the model is. A score above 90% typically indicates strong reliability in detection.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Google Drive Files Card -->
+<div class="slide-card" id="drive-card">
+  <button class="close-btn" onclick="closeCard('drive-card')"><i class="fas fa-times"></i></button>
+  <h2>Google Drive Files Management</h2>
+  <div class="card-content">
+    <div class="drive-input">
+      <label for="drive-id">Google Drive File ID:</label>
+      <input type="text" id="drive-id" placeholder="Enter File ID from Google Drive">
+      <button class="save-btn" onclick="saveDriveFile()"><i class="fas fa-save"></i> Save to Firebase</button>
+    </div>
+    
+    <div class="drive-input">
+      <label for="file-name">File Name (Optional):</label>
+      <input type="text" id="file-name" placeholder="File name for display">
+    </div>
+    
+    <div class="results-box" id="drive-results">
+      <p>Enter a File ID to save it to the database.</p>
+    </div>
+    
+    <button class="detect-btn" onclick="loadDriveFiles()"><i class="fas fa-folder-open"></i> Show Saved Files</button>
+    
+    <div id="saved-files" class="file-link"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Documentation</a>
+      <a href="#">Support</a>
+    </div>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-github"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="#"><i class="fab fa-youtube"></i></a>
+    </div>
+    <div>© 2023 ExoExplorer. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // Firebase configuration
+  const firebaseConfig = {
+    // ضع هنا بيانات التكوين الخاصة بمشروع Firebase
+    apiKey: "your-api-key",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "your-app-id"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // Show cards
+  document.getElementById('circle-detector').addEventListener('click', () => {
+    document.getElementById('detector-card').classList.add('active');
+  });
+  
+  document.getElementById('circle-insights').addEventListener('click', () => {
+    document.getElementById('insights-card').classList.add('active');
+  });
+  
+  document.getElementById('circle-drive').addEventListener('click', () => {
+    document.getElementById('drive-card').classList.add('active');
+  });
+
+  function closeCard(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  // Image Preview Function
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview');
+    const imagePreview = document.getElementById('image-preview');
+    
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // Placeholder JS for existing functionality
+  function useCamera() {
+    alert("Camera capture feature coming soon!");
+  }
+
+  // Updated Detection Function - Returns 1 for Planet, 0 for Pizza
+  function runDetection() {
+    const results = document.getElementById('results-box');
+    
+    // Simulate AI model prediction (1 for Planet, 0 for Pizza)
+    // In a real implementation, this would come from your ML model
+    const isPlanet = Math.random() > 0.5; // Random result for demo
+    
+    const resultValue = isPlanet ? 1 : 0;
+    const resultClass = isPlanet ? 'planet-result' : 'pizza-result';
+    
+    // FIXED: Now correctly displays "Pizza Detected" when result is 0
+    const detectionText = isPlanet ? 'Planet Detected' : 'Pizza Detected';
+    
+    results.innerHTML = `
+      <div class="result-label">AI Detection Result:</div>
+      <div class="binary-result ${resultClass}">${resultValue}</div>
+      <p><strong>Interpretation:</strong> ${detectionText}</p>
+      <p><em>1 = Planet, 0 = Pizza</em></p>
+    `;
+  }
+
+  function showLIME() {
+    alert("LIME explanation heatmap will be displayed here.");
+  }
+
+  // Google Drive Functions
+  function saveDriveFile() {
+    const fileId = document.getElementById('drive-id').value;
+    const fileName = document.getElementById('file-name').value || `File_${Date.now()}`;
+    
+    if (!fileId) {
+      alert("Please enter a valid File ID");
+      return;
+    }
+    
+    // Generate Google Drive links
+    const viewLink = `https://drive.google.com/file/d/${fileId}/view`;
+    const downloadLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    
+    // Save to Firestore
+    db.collection("manga").add({
+      name: fileName,
+      fileId: fileId,
+      viewLink: viewLink,
+      downloadLink: downloadLink,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then((docRef) => {
+      document.getElementById('drive-results').innerHTML = `
+        <p><strong>Successfully Saved!</strong></p>
+        <p>File Name: ${fileName}</p>
+        <p>File ID: ${fileId}</p>
+        <p><a href="${viewLink}" target="_blank">View File</a></p>
+        <p><a href="${downloadLink}" target="_blank">Download File</a></p>
+      `;
+      console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+      document.getElementById('drive-results').innerHTML = `
+        <p style="color: var(--danger);">Error saving: ${error.message}</p>
+      `;
+    });
+  }
+
+  function loadDriveFiles() {
+    const filesContainer = document.getElementById('saved-files');
+    filesContainer.innerHTML = "<p>Loading files...</p>";
+    
+    db.collection("manga")
+      .orderBy("timestamp", "desc")
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          filesContainer.innerHTML = "<p>No saved files yet.</p>";
+          return;
+        }
+        
+        filesContainer.innerHTML = "<h3>Saved Files:</h3>";
+        
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const fileElement = document.createElement('div');
+          fileElement.className = 'file-link';
+          fileElement.innerHTML = `
+            <p><strong>${data.name}</strong></p>
+            <p>File ID: ${data.fileId}</p>
+            <p><a href="${data.viewLink}" target="_blank">View File</a> | 
+               <a href="${data.downloadLink}" target="_blank">Download File</a></p>
+            <button class="lime-btn" onclick="deleteFile('${doc.id}')">Delete</button>
+            <hr>
+          `;
+          filesContainer.appendChild(fileElement);
+        });
+      })
+      .catch((error) => {
+        console.error("Error getting documents: ", error);
+        filesContainer.innerHTML = `<p style="color: var(--danger);">Error loading files: ${error.message}</p>`;
+      });
+  }
+
+  function deleteFile(docId) {
+    if (confirm("Are you sure you want to delete this file?")) {
+      db.collection("manga").doc(docId).delete()
+        .then(() => {
+          alert("File deleted successfully");
+          loadDriveFiles(); // Refresh the list
+        })
+        .catch((error) => {
+          console.error("Error deleting document: ", error);
+          alert("Error deleting file");
+        });
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planet or Pizza</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Inter:wght@300;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* RESET */
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:#000;
+      color:#fff;
+      line-height:1.6;
+    }
+    h2,h3{
+      font-family:'Orbitron',sans-serif;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    /* STARFIELD */
+    .stars,.stars::before,.stars::after{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      content:'';z-index:-2;background:transparent;
+    }
+    .stars::after{
+      background:radial-gradient(2px 2px at 20% 30%,#fff,transparent)repeat;
+      background-size:3px 3px;
+      animation:moveStars 120s linear infinite;
+    }
+    .stars::before{
+      background:radial-gradient(1px 1px at 80% 70%,rgba(255,255,255,0.7),transparent)repeat;
+      background-size:2px 2px;
+      animation:moveStars 200s linear infinite reverse;
+    }
+    @keyframes moveStars{
+      from{background-position:0 0;}
+      to{background-position:8000px 4000px;}
+    }
+
+    /* NAVBAR */
+    nav.top-nav{
+      position:fixed;top:0;left:0;width:100%;
+      background:rgba(0,0,40,0.8);backdrop-filter:blur(6px);
+      display:flex;justify-content:space-between;align-items:center;
+      padding:0.8rem 5%;z-index:1000;
+    }
+    nav.top-nav h1{font-family:'Orbitron',sans-serif;font-size:1.5rem;color:#fff;}
+    nav.top-nav ul{display:flex;gap:2rem;list-style:none;}
+    nav.top-nav a{color:#fff;text-decoration:none;font-weight:500;}
+    nav.top-nav a:hover{color:#00aaff;}
+
+    /* HERO */
+    .hero{position:relative;width:100%;height:100vh;margin-top:60px;overflow:hidden;}
+    .hero video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1;}
+    .hero-content{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      text-align:center;background:rgba(0,0,0,0.4);padding:2rem 3rem;border-radius:12px;
+    }
+    .hero-content h2{font-size:3rem;margin-bottom:1rem;}
+    .hero-content p{font-size:1.2rem;margin-bottom:1rem;}
+
+    /* PAGE LINKS UNDER HERO */
+    .page-links{
+      display:flex;justify-content:center;gap:2rem;
+      background:rgba(0,0,40,0.6);
+      padding:1rem 0;
+      border-top:1px solid rgba(255,255,255,0.1);
+      border-bottom:1px solid rgba(255,255,255,0.1);
+      backdrop-filter:blur(4px);
+    }
+    .page-links a{
+      text-decoration:none;
+      font-weight:500;
+      padding:0.5rem 1.5rem;
+      color:#fff;
+      border-radius:50px;
+      background:linear-gradient(to right, rgba(255,255,255,0.25), rgba(173,216,230,0.25));
+      transition:all 0.3s ease;
+    }
+    .page-links a:hover{
+      background:linear-gradient(to right, rgba(255,255,255,0.4), rgba(173,216,230,0.4));
+      color:#00aaff;
+    }
+
+    /* SECTIONS */
+    section{padding:5rem 8%;}
+    .dark-section{
+      background:linear-gradient(to bottom right,rgba(10,10,30,0.95),rgba(5,5,20,0.9));
+      backdrop-filter:blur(5px);
+    }
+
+    /* SECTION TITLE OVAL */
+    .section-title{
+      display:inline-block;
+      background:linear-gradient(to right, rgba(255,255,255,0.15), rgba(173,216,230,0.15));
+      padding:0.7rem 2rem;
+      border-radius:50px;
+      font-size:2rem;
+      color:#fff;
+      margin:0 auto 3rem;
+      text-align:center;
+      box-shadow:0 0 15px rgba(173,216,230,0.25);
+      backdrop-filter:blur(3px);
+    }
+    .center-title{text-align:center;}
+
+    /* WHO WE ARE */
+    .info-block{
+      display:flex;align-items:center;gap:3rem;margin-bottom:5rem;flex-wrap:wrap;
+    }
+    .info-text{
+      flex:1;font-size:1.1rem;line-height:1.6;
+      background:rgba(0,0,50,0.5);
+      padding:2rem;border-radius:12px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    }
+    .info-img{flex:1;text-align:center;}
+    .info-img img{
+      max-width:100%;border-radius:12px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.6);
+    }
+    .info-block:nth-child(even){flex-direction:row-reverse;}
+
+    /* CTA with VIDEO */
+    .cta{position:relative;height:70vh;display:flex;justify-content:center;align-items:center;overflow:hidden;}
+    .cta video{
+      position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1;
+    }
+    .cta-content{
+      text-align:center;background:rgba(0,0,0,0.4);
+      padding:2rem 3rem;border-radius:12px;
+    }
+    .cta-content h2{font-size:2.5rem;margin-bottom:1rem;}
+    .cta-content p{font-size:1.1rem;margin-bottom:1rem;}
+    .cta-content button{
+      background:#0077ff;border:none;padding:1rem 2rem;
+      font-size:1.1rem;border-radius:8px;color:#fff;cursor:pointer;
+    }
+
+    /* TEAM */
+    .team-members{
+      display:flex;justify-content:center;flex-wrap:wrap;gap:2rem;margin-top:2rem;
+    }
+    .member{
+      background:rgba(0,0,80,0.6);
+      padding:1.5rem;border-radius:12px;width:200px;text-align:center;
+    }
+    .member img{
+      width:100%;height:200px;object-fit:cover;
+      border-radius:8px;margin-bottom:1rem;
+    }
+
+    /* USER ANALYSIS STYLING */
+    .analysis-card{
+      background:rgba(0,0,50,0.4);
+      flex:1;min-width:200px;
+      text-align:center;
+      padding:2rem;
+      border-radius:12px;
+      box-shadow:0 0 20px rgba(0,150,255,0.3);
+      transition: transform 0.3s;
+    }
+    .analysis-card:hover{transform:translateY(-8px);}
+    .analysis-number{
+      font-size:3rem;
+      font-family:'Orbitron',sans-serif;
+      color:#00aaff;
+      text-shadow:0 0 10px rgba(0,170,255,0.7);
+      margin-bottom:0.5rem;
+    }
+    .analysis-label{
+      font-size:1.1rem;
+      color:#fff;
+    }
+
+    /* FAQ STYLING */
+    .faq-item{
+      border-bottom:1px solid rgba(255,255,255,0.2);
+      margin-bottom:1rem;
+    }
+    .faq-question{
+      font-weight:500;
+      padding:1rem 0;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      color:#00aaff;
+      transition:color 0.3s;
+    }
+    .faq-question:hover{color:#7fdfff;}
+    .faq-answer{
+      padding:0.5rem 0 1rem 0;
+      color:#fff;
+      display:none;
+      font-weight:300;
+    }
+    .faq-arrow{
+      font-size:0.8rem;
+      transition:transform 0.3s;
+    }
+    .faq-item.active .faq-arrow{
+      transform:rotate(180deg);
+    }
+    .faq-item.active .faq-answer{
+      display:block;
+    }
+
+    /* NASA STYLE FOOTER */
+    footer{
+      background:#0b0c2a;
+      color:#ccc;
+      padding:3rem 8%;
+      font-size:0.9rem;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:2rem;
+      border-top:2px solid #1b1c3a;
+    }
+    footer h4{color:#9fd6ff;margin-bottom:1rem;font-size:1rem;}
+    footer p{margin-bottom:0.7rem;}
+    footer a{color:#9fd6ff;text-decoration:none;display:block;margin-bottom:0.5rem;}
+    footer a:hover{text-decoration:underline;}
+    footer .full-width{grid-column:1/-1;text-align:center;margin-top:2rem;border-top:1px solid rgba(255,255,255,0.2);padding-top:1rem;font-size:0.8rem;}
+  </style>
+</head>
+
+<body>
+  <div class="stars"></div>
+
+  <!-- NAVBAR -->
+  <nav class="top-nav">
+    <h1>Planet or Pizza</h1>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="beginner.html" id="beginner">Beginners</a></li>
+      <li><a href="professional.html">Professional</a></li>
+      <li><a href="#contact">Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <video autoplay muted loop>
+      <source src="video-space.mp4" type="video/mp4">
+    </video>
+    <div class="hero-content">
+      <h2>Planet or Pizza</h2>
+      <p>Exploring Exoplanets with AI — bridging education, research, and trust in discovery.</p>
+    </div>
+  </section>
+
+  <!-- PAGE LINKS UNDER HERO -->
+  <div class="page-links">
+    <a href="#who-we-are">Who We Are</a>
+    <a href="#user-analysis">User Analysis</a>
+    <a href="#faq">FAQ</a>
+    <a href="#team">Team</a>
+  </div>
+
+  <!-- WHO WE ARE -->
+  <section class="dark-section" id="who-we-are">
+    <div class="center-title"><div class="section-title">Who We Are</div></div>
+
+    <div class="info-block">
+      <div class="info-text">
+        <p>Our solution delivers value by bridging the gap between education, research, and trust in AI-powered exoplanet discovery.</p>
+      </div>
+      <div class="info-img">
+        <img src="lastresearch.png" alt="AR Visualization">
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-text">
+        <p>For beginners, the platform transforms exoplanet discovery into an interactive learning experience through AR visualizations and gamified learning.</p>
+      </div>
+      <div class="info-img">
+        <img src="arara.png" alt="Gamified Learning">
+      </div>
+    </div>
+
+    <div class="info-block">
+      <div class="info-text">
+        <p>For professional researchers, our platform reduces time and effort by automating exoplanet detection using a CNN trained on NASA’s open datasets.</p>
+      </div>
+      <div class="info-img">
+        <img src="cnnlast.png" alt="AI Research">
+      </div>
+    </div>
+  </section>
+
+  <!-- USER ANALYSIS -->
+  <!-- USER ANALYSIS -->
+<section class="dark-section" id="user-analysis">
+  <div class="center-title"><div class="section-title">User Analysis</div></div>
+  <div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center;">
+    <div class="analysis-card">
+      <!-- Only numeric value in data-target -->
+      <div class="analysis-number" data-target="55000" data-format="comma">0</div>
+      <div class="analysis-label">Target Users</div>
+    </div>
+    <div class="analysis-card">
+      <!-- Only numeric value in data-target -->
+      <div class="analysis-number" data-target="97.2" data-format="percent">0%</div>
+      <div class="analysis-label">AI Models Accuracy</div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- FAQ -->
+  <section class="dark-section" id="faq">
+    <div class="center-title"><div class="section-title">Frequently Asked Questions</div></div>
+    <div>
+      <div class="faq-item">
+        <div class="faq-question">How does the AR visualization work? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">The AR visualization overlays planetary shapes and data in real-time for interactive learning.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How accurate is the AI model? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">The CNN model is trained on NASA datasets and uses explainable AI to ensure reliable predictions.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can beginners also detect planets? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">Beginners can learn interactively, while the AI model assists in professional-level detection.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How does the AI detect exoplanets for researchers? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">The CNN model analyzes photometric light curves, identifying stellar flux variations, transit signals, and size features. It also estimates radius, density, and orbital parameters to compare with NASA datasets for identifying new planets.</div>
+      </div>
+       <div class="faq-item">
+        <div class="faq-question">How is trust in AI ensured? <span class="faq-arrow">▼</span></div>
+        <div class="faq-answer">We use explainable AI techniques including uncertainty estimation, confidence scoring, and LIME, highlighting critical data regions influencing predictions.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA with VIDEO -->
+  <section class="cta" id="cta">
+    <video autoplay muted loop>
+      <source src="vecteezy_the-earth-moon-and-sun-in-starry-space_11038661.mp4" type="video/mp4">
+    </video>
+    <div class="cta-content">
+      <h2>Join Our Mission</h2>
+      <p>Be part of the next leap in AI-powered space exploration.</p>
+      <button>Get Started</button>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="dark-section" id="team">
+    <div class="center-title"><div class="section-title">Our Team</div></div>
+    <div class="team-members">
+      <div class="member">
+        <img src="khalid.png" alt="">
+        <h3>khalid Osam</h3>
+        <p>web Developer</p>
+      </div>
+      <div class="member">
+        <img src="mariam.png" alt="">
+        <h3>Mariam Mohamed</h3>
+        <p>AR & gmae Developer</p>
+      </div>
+      <div class="member">
+        <img src="mary.png" alt="">
+        <h3>Mary Emad</h3>
+        <p>AI Model Developer</p>
+      </div>
+      <div class="member">
+        <img src="abdallah.png" alt="">
+        <h3>Abdallah Alzainy </h3>
+        <p>Data Analysis </p>
+      </div>
+      <div class="member">
+        <img src="me.png" alt="">
+        <h3>Jessica Bassem</h3>
+        <p>Designer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <h4>Planet or Pizza</h4>
+      <p>Exploring beyond our solar system and bridging education with AI innovation.</p>
+    </div>
+
+    <div>
+      <h4>Navigate</h4>
+      <a href="#home">Home</a>
+      <a href="#beginner">Beginners</a>
+      <a href="#professional">Professional</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+
+    <div>
+      <h4>Resources</h4>
+      <a href="#">Research Papers</a>
+      <a href="#">Data & Datasets</a>
+      <a href="#">AR Tools</a>
+      <a href="#">AI Models</a>
+      <a href="#">Press & Media</a>
+    </div>
+
+    <div>
+      <h4>Connect</h4>
+      <a href="#">Follow on X</a>
+      <a href="#">YouTube</a>
+      <a href="#">Instagram</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Contact Us</a>
+    </div>
+
+    <div class="full-width">&copy; 2025 Planet or Pizza. All Rights Reserved.</div>
+  </footer>
+
+  <script>
+    // Counter animation for User Analysis
+    const counters = document.querySelectorAll('.analysis-number');
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+        const increment = target / 200;
+        if(count < target){
+          counter.innerText = Math.ceil(count + increment);
+          requestAnimationFrame(updateCount);
+        } else { counter.innerText = target; }
+      };
+      const observer = new IntersectionObserver(entries => {
+        if(entries[0].isIntersecting){
+          updateCount();
+          observer.disconnect();
+        }
+      }, { threshold: 0.5 });
+      observer.observe(counter);
+    });
+
+    // FAQ toggle
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>
