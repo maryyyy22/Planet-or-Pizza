@@ -42,9 +42,8 @@ To prepare them for AI models, we apply:
 - Accuracy: **93%**  
 - **CNN** → extracts spatial features (transit shape/depth).  
 - **Transformer** → captures temporal dependencies (periodic dips).
-- ![WhatsApp Image 2025-10-04 at 08 46 23_c1f39896](https://github.com/user-attachments/assets/3bb86e34-96f3-448e-9d82-193009aaa9f5)
--![WhatsApp Image 2025-10-04 at 08 46 23_7c0493ee](https://github.com/user-attachments/assets/1874da7a-75fc-405b-873f-20a12ad29d1c)
-![WhatsApp Image 2025-10-04 at 08 46 23_30d4bdfd](https://github.com/user-attachments/assets/d9eca691-02b6-44d2-b1e7-671746e64987)
+![WhatsApp Image 2025-10-06 at 00 47 53_0c1499ea](https://github.com/user-attachments/assets/aaa7a3f4-ee8a-493e-833e-292980e5815e)
+![WhatsApp Image 2025-10-06 at 00 46 51_90e2bbfc](https://github.com/user-attachments/assets/78ccc2c0-0aa3-4625-a9cb-d702a3be9146)
 
 
 
